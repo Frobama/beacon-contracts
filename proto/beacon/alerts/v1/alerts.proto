@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package beacon.alerts.v1;
+
+import "beacon/common/v1/common.proto";
+import "google/protobuf/timestamp.proto";
+
+// Consultas sobre alertas. Lo consume el orquestador (gRPC).
+service AlertService {
+  rpc GetAlert(GetAlertRequest) returns (GetAlertResponse);
+  rpc ListAlerts(ListAlertsRequest) returns (ListAlertsResponse);
+  rpc GetAlertsByIncident(GetAlertsByIncidentRequest) returns (GetAlertsByIncidentResponse);
+}
+
+message Alert {
+  string id = 1;
+  // Origen de la alerta, por ejemplo "alertmanager".
+  string source = 2;
+  // Hash estable usado para deduplicar.
+  string fingerprint = 3;
+  string title = 4;
+  // Servicio afectado, por ejemplo "checkout-api".
+  string service = 5;
+  beacon.common.v1.Severity severity = 6;
+  map<string, string> labels = 7;
+  // Payload original del webhook, como JSON.
+  string raw_payload = 8;
+  // Cuántas veces llegó esta misma alerta (deduplicación).
+  int32 occurrences = 9;
+  // Vacío si todavía no está asociada a un incidente.
+  string incident_id = 10;
+  google.protobuf.Timestamp first_received_at = 11;
+  google.protobuf.Timestamp last_received_at = 12;
+}
+
+message GetAlertRequest {
+  string id = 1;
+}
+
+message GetAlertResponse {
+  Alert alert = 1;
+}
+
+message ListAlertsRequest {
+  // Filtros opcionales: vacío o UNSPECIFIED significa "todos".
+  string source = 1;
+  beacon.common.v1.Severity severity = 2;
+  string service = 3;
+  int32 page_size = 4;
+  string page_token = 5;
+}
+
+message ListAlertsResponse {
+  repeated Alert alerts = 1;
+  string next_page_token = 2;
+}
+
+message GetAlertsByIncidentRequest {
+  string incident_id = 1;
+}
+
+message GetAlertsByIncidentResponse {
+  repeated Alert alerts = 1;
+}

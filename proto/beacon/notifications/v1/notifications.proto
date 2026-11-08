@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package beacon.notifications.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// Mensajes de request/reply sobre NATS entre el orquestador y Notificaciones.
+// Los subjects están documentados en docs/nats-subjects.md.
+
+message OnCallUser {
+  string user_id = 1;
+  string name = 2;
+  string email = 3;
+  // Nivel de escalamiento al que pertenece (1 = primer respondedor).
+  int32 level = 4;
+}
+
+message GetOnCallRequest {
+  string team_id = 1;
+  // Si se omite, se usa el momento actual.
+  google.protobuf.Timestamp at = 2;
+}
+
+message GetOnCallResponse {
+  repeated OnCallUser users = 1;
+}
+
+message EscalationLevel {
+  int32 level = 1;
+  // Minutos de espera sin reconocimiento antes de pasar al siguiente nivel.
+  int32 wait_minutes = 2;
+  repeated string user_ids = 3;
+}
+
+message EscalationPolicy {
+  string id = 1;
+  string team_id = 2;
+  string name = 3;
+  repeated EscalationLevel levels = 4;
+}
+
+message ListPoliciesRequest {
+  string team_id = 1;
+}
+
+message ListPoliciesResponse {
+  repeated EscalationPolicy policies = 1;
+}
+
+message ScheduleShift {
+  string user_id = 1;
+  google.protobuf.Timestamp starts_at = 2;
+  google.protobuf.Timestamp ends_at = 3;
+}
+
+message Schedule {
+  string id = 1;
+  string team_id = 2;
+  string name = 3;
+  repeated ScheduleShift shifts = 4;
+}
+
+message CreateScheduleRequest {
+  string team_id = 1;
+  string name = 2;
+  repeated ScheduleShift shifts = 3;
+}
+
+message CreateScheduleResponse {
+  Schedule schedule = 1;
+}

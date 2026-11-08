@@ -1,0 +1,126 @@
+syntax = "proto3";
+
+package beacon.incidents.v1;
+
+import "beacon/common/v1/common.proto";
+import "google/protobuf/timestamp.proto";
+
+// Fuente de verdad del ciclo de vida de los incidentes (gRPC).
+// Lo consumen el orquestador y el servicio de alertas.
+service IncidentService {
+  // Creación manual (frontend, pruebas).
+  rpc CreateIncident(CreateIncidentRequest) returns (CreateIncidentResponse);
+  // Lo llama el servicio de alertas: Incidentes decide si abre uno nuevo
+  // o asocia la alerta a un incidente abierto.
+  rpc ReportAlert(ReportAlertRequest) returns (ReportAlertResponse);
+  rpc GetIncident(GetIncidentRequest) returns (GetIncidentResponse);
+  rpc ListIncidents(ListIncidentsRequest) returns (ListIncidentsResponse);
+  rpc UpdateStatus(UpdateStatusRequest) returns (UpdateStatusResponse);
+  rpc AddTimelineEntry(AddTimelineEntryRequest) returns (AddTimelineEntryResponse);
+}
+
+enum TimelineEntryKind {
+  TIMELINE_ENTRY_KIND_UNSPECIFIED = 0;
+  TIMELINE_ENTRY_KIND_STATUS_CHANGED = 1;
+  TIMELINE_ENTRY_KIND_ALERT_ATTACHED = 2;
+  TIMELINE_ENTRY_KIND_NOTIFICATION_SENT = 3;
+  TIMELINE_ENTRY_KIND_ESCALATED = 4;
+  TIMELINE_ENTRY_KIND_RUNBOOK_EXECUTED = 5;
+  TIMELINE_ENTRY_KIND_MCP_ANALYSIS = 6;
+  TIMELINE_ENTRY_KIND_NOTE = 7;
+}
+
+message TimelineEntry {
+  string id = 1;
+  TimelineEntryKind kind = 2;
+  string message = 3;
+  // Quién lo hizo: id de usuario, "system" o "mcp".
+  string actor = 4;
+  google.protobuf.Timestamp created_at = 5;
+}
+
+message Incident {
+  string id = 1;
+  string title = 2;
+  string service = 3;
+  beacon.common.v1.IncidentStatus status = 4;
+  beacon.common.v1.Severity severity = 5;
+  string assignee_id = 6;
+  repeated string alert_ids = 7;
+  // En ListIncidents viene vacío por eficiencia; se llena en GetIncident.
+  repeated TimelineEntry timeline = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+  google.protobuf.Timestamp resolved_at = 11;
+}
+
+message CreateIncidentRequest {
+  string title = 1;
+  string service = 2;
+  beacon.common.v1.Severity severity = 3;
+  string actor = 4;
+}
+
+message CreateIncidentResponse {
+  Incident incident = 1;
+}
+
+message ReportAlertRequest {
+  string alert_id = 1;
+  string fingerprint = 2;
+  string source = 3;
+  string title = 4;
+  string service = 5;
+  beacon.common.v1.Severity severity = 6;
+  map<string, string> labels = 7;
+  google.protobuf.Timestamp received_at = 8;
+}
+
+message ReportAlertResponse {
+  string incident_id = 1;
+  // true si se abrió un incidente nuevo; false si se asoció a uno existente.
+  bool incident_created = 2;
+}
+
+message GetIncidentRequest {
+  string id = 1;
+}
+
+message GetIncidentResponse {
+  Incident incident = 1;
+}
+
+message ListIncidentsRequest {
+  // Filtros opcionales: UNSPECIFIED o vacío significa "todos".
+  beacon.common.v1.IncidentStatus status = 1;
+  beacon.common.v1.Severity severity = 2;
+  string service = 3;
+  int32 page_size = 4;
+  string page_token = 5;
+}
+
+message ListIncidentsResponse {
+  repeated Incident incidents = 1;
+  string next_page_token = 2;
+}
+
+message UpdateStatusRequest {
+  string id = 1;
+  beacon.common.v1.IncidentStatus status = 2;
+  string actor = 3;
+}
+
+message UpdateStatusResponse {
+  Incident incident = 1;
+}
+
+message AddTimelineEntryRequest {
+  string incident_id = 1;
+  TimelineEntryKind kind = 2;
+  string message = 3;
+  string actor = 4;
+}
+
+message AddTimelineEntryResponse {
+  TimelineEntry entry = 1;
+}

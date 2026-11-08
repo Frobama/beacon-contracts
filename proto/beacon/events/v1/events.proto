@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package beacon.events.v1;
+
+import "beacon/common/v1/common.proto";
+import "google/protobuf/timestamp.proto";
+
+// Eventos publicados en NATS (pub/sub). Todos incluyen event_id y occurred_at.
+// El payload se codifica como JSON canónico de Protobuf. Ver docs/nats-subjects.md.
+
+// Subject: incident.opened
+message IncidentOpened {
+  string event_id = 1;
+  google.protobuf.Timestamp occurred_at = 2;
+  string incident_id = 3;
+  string title = 4;
+  string service = 5;
+  beacon.common.v1.Severity severity = 6;
+}
+
+// Subject: incident.acknowledged
+message IncidentAcknowledged {
+  string event_id = 1;
+  google.protobuf.Timestamp occurred_at = 2;
+  string incident_id = 3;
+  string acknowledged_by = 4;
+}
+
+// Subject: incident.resolved
+message IncidentResolved {
+  string event_id = 1;
+  google.protobuf.Timestamp occurred_at = 2;
+  string incident_id = 3;
+  string resolved_by = 4;
+}
+
+// Subject: incident.severity_changed
+message IncidentSeverityChanged {
+  string event_id = 1;
+  google.protobuf.Timestamp occurred_at = 2;
+  string incident_id = 3;
+  beacon.common.v1.Severity previous = 4;
+  beacon.common.v1.Severity current = 5;
+  string changed_by = 6;
+}
+
+// Subject: escalation.triggered
+message EscalationTriggered {
+  string event_id = 1;
+  google.protobuf.Timestamp occurred_at = 2;
+  string incident_id = 3;
+  int32 from_level = 4;
+  int32 to_level = 5;
+  repeated string notified_user_ids = 6;
+}
+
+// Subject: notification.sent
+message NotificationSent {
+  string event_id = 1;
+  google.protobuf.Timestamp occurred_at = 2;
+  string incident_id = 3;
+  string user_id = 4;
+  // Canal usado: "slack", "discord", "telegram", "email".
+  string channel = 5;
+  bool success = 6;
+}

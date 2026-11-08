@@ -1,0 +1,31 @@
+version: v2
+clean: true
+managed:
+  enabled: true
+  override:
+    - file_option: go_package_prefix
+      value: github.com/Frobama/beacon-contracts/gen-verify/go
+plugins:
+  # Go
+  - remote: buf.build/protocolbuffers/go
+    out: gen-verify/go
+    opt: paths=source_relative
+  - remote: buf.build/grpc/go
+    out: gen-verify/go
+    opt: paths=source_relative
+  # Java
+  - remote: buf.build/protocolbuffers/java
+    out: gen-verify/java
+  - remote: buf.build/grpc/java
+    out: gen-verify/java
+  # C#
+  - remote: buf.build/protocolbuffers/csharp
+    out: gen-verify/csharp
+  # TypeScript (NestJS)
+  - remote: buf.build/community/stephenh-ts-proto
+    out: gen-verify/ts
+    include_imports: true
+    include_wkt: true
+    opt:
+      - nestJs=true
+      - esModuleInterop=true

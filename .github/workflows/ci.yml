@@ -1,0 +1,39 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  proto:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: bufbuild/buf-setup-action@v1
+        with:
+          github_token: ${{ github.token }}
+
+      - name: Formato
+        run: buf format --diff --exit-code
+
+      - name: Lint
+        run: buf lint
+
+      - name: Cambios incompatibles
+        if: github.event_name == 'pull_request'
+        run: buf breaking --against ".git#branch=origin/${{ github.base_ref }}"
+
+      - name: Generar código en los 4 lenguajes
+        run: buf generate --template buf.gen.verify.yaml
+
+      - name: Verificar que se generó todo
+        run: |
+          test -n "$(find gen-verify/go -name '*.pb.go')"
+          test -n "$(find gen-verify/go -name '*_grpc.pb.go')"
+          test -n "$(find gen-verify/java -name '*.java')"
+          test -n "$(find gen-verify/csharp -name '*.cs')"
+          test -n "$(find gen-verify/ts -name '*.ts')"

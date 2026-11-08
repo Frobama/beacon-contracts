@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package beacon.common.v1;
+
+// Severidad compartida por alertas, incidentes y eventos.
+enum Severity {
+  SEVERITY_UNSPECIFIED = 0;
+  SEVERITY_LOW = 1;
+  SEVERITY_MEDIUM = 2;
+  SEVERITY_HIGH = 3;
+  SEVERITY_CRITICAL = 4;
+}
+
+// Estados del ciclo de vida de un incidente.
+// triggered -> acknowledged -> mitigating -> resolved -> postmortem
+enum IncidentStatus {
+  INCIDENT_STATUS_UNSPECIFIED = 0;
+  INCIDENT_STATUS_TRIGGERED = 1;
+  INCIDENT_STATUS_ACKNOWLEDGED = 2;
+  INCIDENT_STATUS_MITIGATING = 3;
+  INCIDENT_STATUS_RESOLVED = 4;
+  INCIDENT_STATUS_POSTMORTEM = 5;
+}
