@@ -24,6 +24,8 @@ Solo el orquestador hace requests; solo Notificaciones responde.
 |---|---|---|
 | `notifications.oncall.get` | `GetOnCallRequest` | `GetOnCallResponse` |
 | `notifications.policies.list` | `ListPoliciesRequest` | `ListPoliciesResponse` |
+| `notifications.schedules.list` | `ListSchedulesRequest` | `ListSchedulesResponse` |
+| `notifications.teams.list` | `ListTeamsRequest` | `ListTeamsResponse` |
 | `notifications.schedule.create` | `CreateScheduleRequest` | `CreateScheduleResponse` |
 
 Si Notificaciones corre con varias réplicas, todas se suscriben con el *queue group* `notifications` para que solo una atienda cada request.
@@ -52,4 +54,4 @@ El que hace la request debe revisar estos headers antes de decodificar el payloa
 
 ## Ruteo servicio → equipo
 
-El evento `incident.opened` trae el campo `service`. Notificaciones mantiene su propia configuración que mapea servicio a equipo de guardia.
+El evento `incident.opened` trae el campo `service`. Notificaciones mantiene su propia configuración que mapea servicio a equipo de guardia: primero busca un equipo que liste ese servicio exacto y, si no hay, usa el equipo marcado con `"*"`.

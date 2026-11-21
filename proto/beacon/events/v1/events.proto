@@ -60,7 +60,7 @@ message NotificationSent {
   google.protobuf.Timestamp occurred_at = 2;
   string incident_id = 3;
   string user_id = 4;
-  // Canal usado: "slack", "discord", "telegram", "email".
+  // Canal usado: "log" (desarrollo), "discord" o "slack".
   string channel = 5;
   bool success = 6;
 }

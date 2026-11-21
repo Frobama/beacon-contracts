@@ -4,7 +4,7 @@ Aplica a todos los repositorios de Beacon.
 
 ## Ramas
 
-Trabajamos con **trunk-based development**: `main` siempre está estable y desplegable. Todo cambio entra por Pull Request desde una rama corta.
+Trabajamos con **trunk-based development**: `master` siempre está estable y desplegable. Todo cambio entra por Pull Request desde una rama corta.
 
 | Prefijo | Uso | Ejemplo |
 |---|---|---|
@@ -29,18 +29,18 @@ ci: add coverage threshold
 docs(contracts): document nats subjects
 ```
 
-El **título del PR** también debe seguir este formato (lo valida un workflow) porque usamos *squash merge*: el título del PR se convierte en el commit en `main`.
+El **título del PR** también debe seguir este formato (lo valida un workflow) porque usamos *squash merge*: el título del PR se convierte en el commit en `master`.
 
 ## Pull Requests
 
-1. Crea la rama desde `main` actualizado.
+1. Crea la rama desde `master` actualizado.
 2. Abre el PR con el template.
 3. El pipeline debe pasar en verde.
 4. Haz *squash and merge* y borra la rama.
 
 ## Versionado
 
-Semantic Versioning (`vMAYOR.MENOR.PARCHE`) mediante tags en `main`.
+Semantic Versioning (`vMAYOR.MENOR.PARCHE`) mediante tags en `master`.
 
 - En `beacon-contracts` los tags son la **fuente de verdad**: los demás repos fijan la versión que consumen.
 - Cambios compatibles (agregar campos o mensajes) suben MENOR.

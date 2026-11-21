@@ -25,6 +25,20 @@ message GetOnCallResponse {
   repeated OnCallUser users = 1;
 }
 
+message Team {
+  string id = 1;
+  string name = 2;
+  // Servicios que atiende el equipo. El valor "*" significa "todos los demás":
+  // solo se usa cuando ningún equipo coincide exactamente con el servicio.
+  repeated string services = 3;
+}
+
+message ListTeamsRequest {}
+
+message ListTeamsResponse {
+  repeated Team teams = 1;
+}
+
 message EscalationLevel {
   int32 level = 1;
   // Minutos de espera sin reconocimiento antes de pasar al siguiente nivel.
@@ -58,6 +72,14 @@ message Schedule {
   string team_id = 2;
   string name = 3;
   repeated ScheduleShift shifts = 4;
+}
+
+message ListSchedulesRequest {
+  string team_id = 1;
+}
+
+message ListSchedulesResponse {
+  repeated Schedule schedules = 1;
 }
 
 message CreateScheduleRequest {
