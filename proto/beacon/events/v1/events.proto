@@ -44,6 +44,16 @@ message IncidentSeverityChanged {
   string changed_by = 6;
 }
 
+// Subject: incident.alert_attached
+// Se publica tanto al asociar una alerta a un incidente abierto como al abrir
+// uno nuevo a partir de una alerta, para que el dashboard reciba siempre un evento.
+message IncidentAlertAttached {
+  string event_id = 1;
+  google.protobuf.Timestamp occurred_at = 2;
+  string incident_id = 3;
+  string alert_id = 4;
+}
+
 // Subject: escalation.triggered
 message EscalationTriggered {
   string event_id = 1;

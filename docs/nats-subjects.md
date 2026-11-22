@@ -10,11 +10,14 @@ Sin JetStream: usamos NATS core (pub/sub y request/reply). Los mensajes no se pe
 | `incident.acknowledged` | `IncidentAcknowledged` | Incidentes | Notificaciones, Orquestador |
 | `incident.resolved` | `IncidentResolved` | Incidentes | Notificaciones, Orquestador |
 | `incident.severity_changed` | `IncidentSeverityChanged` | Incidentes | Orquestador |
+| `incident.alert_attached` | `IncidentAlertAttached` | Incidentes | Orquestador |
 | `escalation.triggered` | `EscalationTriggered` | Notificaciones | Incidentes, Orquestador |
 | `notification.sent` | `NotificationSent` | Notificaciones | Incidentes, Orquestador |
 
 El orquestador escucha los eventos para alimentar las *subscriptions* de GraphQL.
 Incidentes escucha `escalation.triggered` y `notification.sent` para dejarlos en el timeline.
+`incident.alert_attached` se publica también cuando el incidente se abre a partir de una alerta,
+para que el dashboard tenga un evento coherente desde el primer momento.
 
 ## Comandos y consultas (request/reply)
 

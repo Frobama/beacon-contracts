@@ -40,9 +40,18 @@ buf generate --template buf.gen.verify.yaml   # probar generación
 
 Semantic Versioning por tags. En `v1` solo se agregan campos o mensajes; nunca se renombra ni se borra nada. Cambios incompatibles requieren un paquete `v2`.
 
+Los tags son la fuente de verdad y **un consumidor nunca apunta a un tag que no exista**: primero se publica el tag aquí, después se sube `CONTRACTS_TAG` en un PR del repo consumidor. Si el consumidor necesita un campo nuevo, el bump y el código que lo usa van en el mismo PR.
+
+| Repo | `CONTRACTS_TAG` | Por qué |
+|---|---|---|
+| `beacon-incidents` | `v0.3.0` | publica `incident.alert_attached` |
+| `beacon-backend` | `v0.3.0` | mapea ese evento a las subscriptions de GraphQL |
+| `beacon-alerts` | `v0.2.0` | solo habla gRPC con Incidentes; no usa los eventos nuevos |
+| `beacon-notifications` | `v0.1.0` | diferido: su `Makefile` y el plugin C# se arreglan en su propio PR |
+
 Para publicar una versión:
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.3.0
+git push origin v0.3.0
 ```
