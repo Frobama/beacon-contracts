@@ -44,10 +44,14 @@ Los tags son la fuente de verdad y **un consumidor nunca apunta a un tag que no 
 
 | Repo | `CONTRACTS_TAG` | Por qué |
 |---|---|---|
-| `beacon-incidents` | `v0.3.0` | publica `incident.alert_attached` |
-| `beacon-backend` | `v0.3.0` | mapea ese evento a las subscriptions de GraphQL |
+| `beacon-incidents` | `v0.2.0` → `v0.3.0` | publica `incident.alert_attached`; el bump va en su PR de Fase 3 |
+| `beacon-backend` | `v0.2.0` → `v0.3.0` | mapea ese evento a las subscriptions de GraphQL; el bump va en su PR de Fase 3 |
 | `beacon-alerts` | `v0.2.0` | solo habla gRPC con Incidentes; no usa los eventos nuevos |
-| `beacon-notifications` | `v0.1.0` | diferido: su `Makefile` y el plugin C# se arreglan en su propio PR |
+| `beacon-notifications` | `v0.2.0` | usa `Team`, `ListTeams*` y `ListSchedules*` desde `v0.2.0` |
+
+Al publicar `v0.3.0`, solo `beacon-incidents` y `beacon-backend` necesitan el bump.
+`beacon-alerts` y `beacon-notifications` pueden quedarse en `v0.2.0` porque no
+consumen `incident.alert_attached`.
 
 Para publicar una versión:
 
